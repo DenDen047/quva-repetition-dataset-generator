@@ -66,13 +66,40 @@ if __name__ == "__main__":
     video_dir = os.path.join(quva_dir, 'videos')
     npy_dir = os.path.join(quva_dir, 'annotations')
 
+    os.makedirs(args.output_dir, exist_ok=True)
+
     logger.info(f'command line arguments: {args}')
 
-    npy_fpaths = glob.glob(os.path.join(npy_dir, '*.npy'))
+    vid_fpaths = sorted(glob.glob(os.path.join(video_dir, '*.mp4')))
+    npy_fpaths = sorted(glob.glob(os.path.join(npy_dir, '*.npy')))
 
-    for npy_fpath in npy_fpaths:
-        pprint(npy_fpath)
-        result = np.load(npy_fpath)
-        pprint(result)
+    for vid_fpath, npy_fpath in zip(vid_fpaths, npy_fpaths):
+        # load a video
+        logger.info(f'load {vid_fpath}')
+        imgs, vid_info = read_video(vid_fpath)
+        n_frames, w, h, c = imgs.shape
+        logger.info(f'{imgs.shape}')
+        logger.info(f'{vid_info}')
 
-        break
+        # load the annotation data
+        logger.info(f'load {npy_fpath}')
+        count_frames = np.load(npy_fpath)
+        logger.info(f'{count_frames}')
+
+        rep_start = 0
+        rep_end = count_frames[-1]
+        n_rep = len(count_frames)
+
+        # generate the data for RepNet
+        period_length = (rep_end - rep_start) / n_rep
+        periodicities = np.ones((n_frames,))
+
+        # save
+        output_fpath = os.path.join(
+            args.output_dir,
+            os.path.basename(npy_fpath)[:-4]
+        )
+        np.savez_compressed(
+            output_fpath,
+            imgs, period_length, periodicities
+        )
