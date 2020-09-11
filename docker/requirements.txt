@@ -2,5 +2,4 @@ pillow
 numpy
 opencv-python
 opencv-contrib-python
-youtube-dl
 tqdm
