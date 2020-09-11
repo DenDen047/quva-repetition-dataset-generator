@@ -1,7 +1,15 @@
 #!/bin/bash
 
 CURRENT_PATH=$(pwd)
-IMAGE_NAME="denden047/countix_generator"
+IMAGE_NAME="denden047/quva_dataset_generator"
+
+data_dir="data"
+quva_dir="data/QUVARepetitionDataset"
+if [[ ! -d "$quva_dir" ]]; then
+    cd ${data_dir} && \
+    wget http://isis-data.science.uva.nl/tomrunia/QUVARepetitionDataset.tar.gz && \
+    tar -xvf QUVARepetitionDataset.tar.gz
+fi
 
 docker build -t ${IMAGE_NAME} "$CURRENT_PATH"/docker && \
 docker run -it --rm \
@@ -13,5 +21,4 @@ docker run -it --rm \
     /bin/bash -c " \
         python main.py \
             --logging \
-            --reshape_video \
     "
