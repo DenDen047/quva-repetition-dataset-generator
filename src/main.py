@@ -38,8 +38,8 @@ logger.addHandler(_console_handler)
 
 def read_video(
     video_filename: str,
-    width: int = 224,
-    height: int = 224
+    width: int = 112,
+    height: int = 112
 ):
     """Read video from file."""
     cap = cv.VideoCapture(video_filename)
