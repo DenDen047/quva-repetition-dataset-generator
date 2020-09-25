@@ -78,8 +78,7 @@ if __name__ == "__main__":
         logger.info(f'load {vid_fpath}')
         imgs, vid_info = read_video(vid_fpath)
         n_frames, w, h, c = imgs.shape
-        logger.info(f'{imgs.shape}')
-        logger.info(f'{vid_info}')
+        logger.info(f'video info: {vid_info}')
 
         # load the annotation data
         logger.info(f'load {npy_fpath}')
@@ -90,9 +89,29 @@ if __name__ == "__main__":
         rep_end = count_frames[-1]
         n_rep = len(count_frames)
 
-        # generate the data for RepNet
-        period_length = (rep_end - rep_start) / n_rep
+        # generate period lengths
+        period_lengths = []
+        previous_frame = 0
+        for count_frame in count_frames:
+            period_length = count_frame - previous_frame
+            period_lengths += [period_length] * period_length
+            previous_frame = count_frame
+
+        period_lengths = np.asarray(period_lengths)
+
+        # update the number of frames
+        n_frames = len(period_lengths)
+
+        # crop the image until `n_frames` frame
+        imgs = imgs[:n_frames, :]
+
+        # generate periodicities
         periodicities = np.ones((n_frames,))
+
+        # logging
+        logger.info(f'imgs: {imgs.shape}')
+        logger.info(f'period_lengths: {period_lengths.shape}')
+        logger.info(f'periodicities: {periodicities.shape}')
 
         # save
         output_fpath = os.path.join(
@@ -102,6 +121,8 @@ if __name__ == "__main__":
         np.savez_compressed(
             output_fpath,
             imgs=imgs,
-            period_length=period_length,
+            period_length=period_lengths,
             periodicities=periodicities
         )
+
+        import sys; sys.exit(1)
