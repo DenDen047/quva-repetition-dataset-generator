@@ -121,7 +121,7 @@ if __name__ == "__main__":
         np.savez_compressed(
             output_fpath,
             imgs=imgs,
-            period_length=period_lengths,
+            period_lengths=period_lengths,
             periodicities=periodicities
         )
 
