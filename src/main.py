@@ -124,5 +124,3 @@ if __name__ == "__main__":
             period_lengths=period_lengths,
             periodicities=periodicities
         )
-
-        import sys; sys.exit(1)
