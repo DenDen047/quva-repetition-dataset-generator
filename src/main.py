@@ -89,24 +89,27 @@ if __name__ == "__main__":
         rep_end = count_frames[-1]
         n_rep = len(count_frames)
 
-        # generate period lengths
+        # generate period lengths and periodicities
         period_lengths = []
+        periodicities = []  # [1,1,1,1,1,1,2,2,2,2,2,3,3,3....]
+        count = 1
         previous_frame = 0
         for count_frame in count_frames:
             period_length = count_frame - previous_frame
             period_lengths += [period_length] * period_length
             previous_frame = count_frame
 
+            periodicities += [count] * period_length
+            count += 1
+
         period_lengths = np.asarray(period_lengths)
+        periodicities = np.asarray(periodicities)
 
         # update the number of frames
         n_frames = len(period_lengths)
 
         # crop the image until `n_frames` frame
         imgs = imgs[:n_frames, :]
-
-        # generate periodicities
-        periodicities = np.ones((n_frames,))
 
         # logging
         logger.info(f'imgs: {imgs.shape}')
