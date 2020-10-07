@@ -89,9 +89,9 @@ if __name__ == "__main__":
         rep_end = count_frames[-1]
         n_rep = len(count_frames)
 
-        # generate period lengths and periodicities
+        # generate period lengths and counts
         period_lengths = []
-        periodicities = []  # [1,1,1,1,1,1,2,2,2,2,2,3,3,3....]
+        counts = []  # [1,1,1,1,1,1,2,2,2,2,2,3,3,3....]
         count = 1
         previous_frame = 0
         for count_frame in count_frames:
@@ -99,11 +99,11 @@ if __name__ == "__main__":
             period_lengths += [period_length] * period_length
             previous_frame = count_frame
 
-            periodicities += [count] * period_length
+            counts += [count] * period_length
             count += 1
 
         period_lengths = np.asarray(period_lengths)
-        periodicities = np.asarray(periodicities)
+        counts = np.asarray(counts)
 
         # update the number of frames
         n_frames = len(period_lengths)
@@ -111,10 +111,14 @@ if __name__ == "__main__":
         # crop the image until `n_frames` frame
         imgs = imgs[:n_frames, :]
 
+        # generate periodicities
+        periodicities = np.ones((n_frames,))
+
         # logging
         logger.info(f'imgs: {imgs.shape}')
         logger.info(f'period_lengths: {period_lengths.shape}')
         logger.info(f'periodicities: {periodicities.shape}')
+        logger.info(f'counts: {counts.shape}')
 
         # save
         output_fpath = os.path.join(
@@ -125,5 +129,6 @@ if __name__ == "__main__":
             output_fpath,
             imgs=imgs,
             period_lengths=period_lengths,
-            periodicities=periodicities
+            periodicities=periodicities,
+            counts=counts
         )
